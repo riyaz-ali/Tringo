@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.iamriyaz.tringo">
 
+  <!-- permissions -->
+  <uses-permission android:name="android.permission.INTERNET" />
+
+
   <application
       android:name=".Tringo"
       android:allowBackup="true"

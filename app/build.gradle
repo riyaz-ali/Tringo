@@ -60,4 +60,9 @@ dependencies {
 
   // Timber logging facade
   implementation 'com.jakewharton.timber:timber:4.7.0'
+
+  // Retrofit + Gson for networking & parsing
+  implementation 'com.google.code.gson:gson:2.8.4'
+  implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+  implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
 }
