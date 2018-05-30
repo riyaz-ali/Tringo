@@ -53,4 +53,7 @@ dependencies {
 
   // Android support libraries
   implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
+
+  // Timber logging facade
+  implementation 'com.jakewharton.timber:timber:4.7.0'
 }
