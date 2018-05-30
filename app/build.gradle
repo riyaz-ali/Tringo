@@ -1,11 +1,12 @@
 apply plugin: 'com.android.application'
 
-def getApiKey(String id){
+def getApiKey(String id) {
   FileInputStream fis = new FileInputStream(rootProject.file("local.properties"))
   Properties properties = new Properties()
   properties.load(fis)
-  if(null == properties[id])
+  if (null == properties[id]) {
     throw new Error(String.format("Missing required property: '%s'", id))
+  }
   return '"' + properties.get(id) + '"'
 }
 
@@ -53,6 +54,9 @@ dependencies {
 
   // Android support libraries
   implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
+
+  // ConstraintLayout!
+  implementation 'com.android.support.constraint:constraint-layout:1.1.0'
 
   // Timber logging facade
   implementation 'com.jakewharton.timber:timber:4.7.0'
