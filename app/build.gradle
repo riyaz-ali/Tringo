@@ -1,0 +1,56 @@
+apply plugin: 'com.android.application'
+
+def getApiKey(String id){
+  FileInputStream fis = new FileInputStream(rootProject.file("local.properties"))
+  Properties properties = new Properties()
+  properties.load(fis)
+  if(null == properties[id])
+    throw new Error(String.format("Missing required property: '%s'", id))
+  return '"' + properties.get(id) + '"'
+}
+
+android {
+  compileSdkVersion 27
+  buildToolsVersion '27.0.3'
+
+  defaultConfig {
+    applicationId "com.iamriyaz.tringo"
+    minSdkVersion 16
+    targetSdkVersion 27
+    versionCode 01
+    versionName "0.1"
+  }
+
+  buildTypes {
+    release {
+      // explicitly disable proguard and related optimisations
+      minifyEnabled false
+
+      buildConfigField "String", "TMDB_API_URL", "\"https://api.themoviedb.org/3/\""
+      buildConfigField "String", "TMDB_API_KEY", getApiKey("tmdb.api_key")
+    }
+    debug {
+      applicationIdSuffix '.debug'
+
+      buildConfigField "String", "TMDB_API_URL", "\"https://api.themoviedb.org/3/\""
+      buildConfigField "String", "TMDB_API_KEY", getApiKey("tmdb.api_key")
+    }
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+}
+
+ext {
+  supportLibraryVersion = "27.1.1"
+}
+
+dependencies {
+  // libs/ directory tree
+  implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+  // Android support libraries
+  implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
+}
