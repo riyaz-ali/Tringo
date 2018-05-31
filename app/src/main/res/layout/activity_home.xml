@@ -36,5 +36,7 @@
       android:layout_weight="1"
       app:layoutManager="android.support.v7.widget.GridLayoutManager"
       app:spanCount="2"
+      android:paddingLeft="2dp"
+      android:paddingRight="2dp"
       tools:listitem="@layout/adapter_movie_item" />
 </LinearLayout>

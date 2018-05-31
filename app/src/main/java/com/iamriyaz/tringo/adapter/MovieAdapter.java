@@ -8,9 +8,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ImageView;
 import com.iamriyaz.tringo.R;
 import com.iamriyaz.tringo.data.Movie;
+import com.squareup.picasso.Picasso;
+
+import static com.iamriyaz.tringo.Utils.createTmdbImageUrl;
 
 /**
  * Created on 30 May, 2018
@@ -20,17 +23,21 @@ import com.iamriyaz.tringo.data.Movie;
 public class MovieAdapter extends PagedListAdapter<Movie, MovieAdapter.ViewHolder> {
 
   // ViewHolder implementation
-  static class ViewHolder extends RecyclerView.ViewHolder {
-    TextView title;
+  class ViewHolder extends RecyclerView.ViewHolder {
+    ImageView poster;
 
     ViewHolder(View itemView) {
       super(itemView);
-      title = itemView.findViewById(R.id.movie_title);
+      poster = itemView.findViewById(R.id.movie_poster);
     }
 
     // bind data to the view
-    void bind(@NonNull Movie movie){
-      title.setText(movie.getTitle());
+    void bind(@NonNull Movie movie) {
+      Picasso.get()
+          .load(createTmdbImageUrl(movie.getPoster(), "w342"))
+          .placeholder(R.drawable.placeholder)
+          //.resizeDimen(R.dimen.poster_width, R.dimen.poster_width)
+          .into(poster);
     }
   }
 
