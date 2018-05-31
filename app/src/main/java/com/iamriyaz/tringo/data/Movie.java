@@ -1,5 +1,7 @@
 package com.iamriyaz.tringo.data;
 
+import android.support.v7.util.DiffUtil;
+import android.text.TextUtils;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -18,6 +20,18 @@ public class Movie {
   // path to movie's poster
   @SerializedName("poster_path")
   private String poster;
+
+  // DiffCallback to assist Adapter
+  public static final DiffUtil.ItemCallback<Movie> DIFF_CALLBACK = new DiffUtil.ItemCallback<Movie>() {
+    @Override public boolean areItemsTheSame(Movie oldItem, Movie newItem) {
+      return oldItem.id == newItem.id;
+    }
+
+    @Override public boolean areContentsTheSame(Movie oldItem, Movie newItem) {
+      return TextUtils.equals(oldItem.poster, newItem.poster)
+          && TextUtils.equals(oldItem.title, newItem.title);
+    }
+  };
 
   // ... other fields not taken into account as they are not used on the UI
 
