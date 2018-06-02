@@ -13,6 +13,8 @@ import com.iamriyaz.tringo.R;
 import com.iamriyaz.tringo.data.Movie;
 import com.squareup.picasso.Picasso;
 
+import static com.iamriyaz.tringo.Utils.aspect;
+import static com.iamriyaz.tringo.Utils.calculateOtherDimension;
 import static com.iamriyaz.tringo.Utils.createTmdbImageUrl;
 
 /**
@@ -33,10 +35,11 @@ public class MovieAdapter extends PagedListAdapter<Movie, MovieAdapter.ViewHolde
 
     // bind data to the view
     void bind(@NonNull Movie movie) {
+      // height can be made dynamic later to support high density devices
       Picasso.get()
-          .load(createTmdbImageUrl(movie.getPoster(), "w342"))
+          .load(createTmdbImageUrl(movie.getPoster(), 300,
+              calculateOtherDimension(aspect(2, 3), 300)))
           .placeholder(R.drawable.placeholder)
-          //.resizeDimen(R.dimen.poster_width, R.dimen.poster_width)
           .into(poster);
     }
   }
