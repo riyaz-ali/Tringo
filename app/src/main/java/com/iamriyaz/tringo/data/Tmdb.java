@@ -1,6 +1,7 @@
 package com.iamriyaz.tringo.data;
 
 import android.support.annotation.NonNull;
+import com.iamriyaz.tringo.StethoUtils;
 import java.io.IOException;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -46,13 +47,15 @@ public final class Tmdb {
    */
   @NonNull public static Api create(@NonNull String base, @NonNull String key){
     // create a custom http client to inject api key
-    OkHttpClient okHttpClient = new OkHttpClient.Builder()
-        .addInterceptor(new TmdbKeyInjectionInterceptor(key))
-        .build();
+    OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder()
+        .addInterceptor(new TmdbKeyInjectionInterceptor(key));
+
+    // it injects stetho interceptor in debug build else does nothing!
+    StethoUtils.inject(okHttpClient);
 
     // build retrofit
     Retrofit retrofit = new Retrofit.Builder()
-        .client(okHttpClient)
+        .client(okHttpClient.build())
         .baseUrl(base)
         .addConverterFactory(GsonConverterFactory.create())
         .build();

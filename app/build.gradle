@@ -78,4 +78,8 @@ dependencies {
 
   // Picasso
   implementation 'com.squareup.picasso:picasso:2.71828'
+
+  // Facebook Stetho to debug network calls in debug builds
+  debugImplementation 'com.facebook.stetho:stetho:1.5.0'
+  debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
 }

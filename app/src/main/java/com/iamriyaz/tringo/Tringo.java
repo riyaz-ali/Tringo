@@ -25,6 +25,9 @@ public final class Tringo extends Application {
     }
     // TODO: plant a tree for some remote logging service in production, if we happen to use one
 
+    // initialize Stetho interceptor
+    StethoUtils.install(this);
+
     // create and cache API service
     this.service = Tmdb.create(BuildConfig.TMDB_API_URL, BuildConfig.TMDB_API_KEY);
   }
