@@ -5,6 +5,7 @@ import android.arch.paging.PageKeyedDataSource;
 import android.os.Handler;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import com.iamriyaz.tringo.NetworkListener;
 import com.iamriyaz.tringo.data.Tmdb;
 import java.util.Collections;
 import retrofit2.Call;
@@ -38,16 +39,20 @@ public final class MoviesDataSource extends PageKeyedDataSource<Integer, Movie> 
   private final int mode;
   // API client
   private final Tmdb.Api tmdbApi;
+  // network state listener
+  private final NetworkListener networkListener;
 
-  public MoviesDataSource(@NonNull Tmdb.Api tmdbApi, @DataSourceMode int mode) {
+  public MoviesDataSource(@NonNull Tmdb.Api tmdbApi, @DataSourceMode int mode,
+      @NonNull NetworkListener networkListener) {
     this.mode = mode;
     this.tmdbApi = requireNonNull(tmdbApi);
+    this.networkListener = requireNonNull(networkListener);
   }
 
   @Override public void loadInitial(@NonNull LoadInitialParams<Integer> params,
       @NonNull LoadInitialCallback<Integer, Tmdb.Movie> callback) {
 
-    create(1 /* page */).enqueue(new CallbackWithRetry<Tmdb.MovieResponse>(MAX_RETRY) {
+    request(1 /* page */).enqueue(new Callback<Tmdb.MovieResponse>() {
       @Override public void onResponse(Call<Tmdb.MovieResponse> call, Response<MovieResponse> response) {
         if (response.isSuccessful()) {
           MovieResponse movieResponse = requireNonNull(response.body());
@@ -58,7 +63,7 @@ public final class MoviesDataSource extends PageKeyedDataSource<Integer, Movie> 
         }
       }
 
-      @Override public void onFinalFailure(Call<MovieResponse> call, Throwable t) {
+      @Override public void onFailure(Call<MovieResponse> call, Throwable t) {
         Timber.e(t, "Failed to get popular movies from API");
         callback.onResult(Collections.emptyList(), null, null);
       }
@@ -68,7 +73,7 @@ public final class MoviesDataSource extends PageKeyedDataSource<Integer, Movie> 
   @Override public void loadBefore(@NonNull LoadParams<Integer> params,
       @NonNull LoadCallback<Integer, Movie> callback) {
 
-    create(params.key).enqueue(new CallbackWithRetry<MovieResponse>(MAX_RETRY) {
+    request(params.key).enqueue(new Callback<MovieResponse>() {
       @Override public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
         if (response.isSuccessful()) {
           MovieResponse movieResponse = requireNonNull(response.body());
@@ -78,7 +83,7 @@ public final class MoviesDataSource extends PageKeyedDataSource<Integer, Movie> 
         }
       }
 
-      @Override public void onFinalFailure(Call<MovieResponse> call, Throwable t) {
+      @Override public void onFailure(Call<MovieResponse> call, Throwable t) {
         Timber.e(t, "Failed to get popular movies from API");
         callback.onResult(Collections.emptyList(), null);
       }
@@ -88,7 +93,7 @@ public final class MoviesDataSource extends PageKeyedDataSource<Integer, Movie> 
   @Override public void loadAfter(@NonNull LoadParams<Integer> params,
       @NonNull LoadCallback<Integer, Movie> callback) {
 
-    create(params.key).enqueue(new CallbackWithRetry<MovieResponse>(MAX_RETRY) {
+    request(params.key).enqueue(new Callback<MovieResponse>() {
       @Override public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
         if(response.isSuccessful()){
           MovieResponse movieResponse = requireNonNull(response.body());
@@ -98,19 +103,52 @@ public final class MoviesDataSource extends PageKeyedDataSource<Integer, Movie> 
         }
       }
 
-      @Override public void onFinalFailure(Call<MovieResponse> call, Throwable t) {
+      @Override public void onFailure(Call<MovieResponse> call, Throwable t) {
         Timber.e(t,"Failed to get popular movies from API");
         callback.onResult(Collections.emptyList(), null);
       }
     });
   }
 
-  // helper to create api calls
-  @NonNull private Call<MovieResponse> create(int page){
+  // helper to request api calls
+  @NonNull private Enqueable<MovieResponse> request(int page){
+    Call<MovieResponse> call;
     if(mode == MODE_POPULAR)
-      return tmdbApi.getPopularMovies(page);
+      call = tmdbApi.getPopularMovies(page);
     else
-      return tmdbApi.getTopRatedMovies(page);
+      call = tmdbApi.getTopRatedMovies(page);
+
+    // move to loading state
+    networkListener.onNetworkStateChange(NetworkListener.LOADING);
+
+    return callback -> {
+      call.enqueue(new CallbackWithRetry<MovieResponse>(MAX_RETRY) {
+        @Override public void onResponse(@NonNull Call<MovieResponse> call,
+            @NonNull Response<MovieResponse> response) {
+          if(response.isSuccessful()){
+            // move to loaded state
+            networkListener.onNetworkStateChange(NetworkListener.LOADED);
+            callback.onResponse(call, response);
+          } else {
+            onFailure(call, new Exception("API error"));
+          }
+        }
+
+        @Override
+        public void onFinalFailure(@NonNull Call<MovieResponse> call, @NonNull Throwable t) {
+          // move to failed state
+          networkListener.onNetworkStateChange(NetworkListener.error(t.getMessage()));
+          callback.onFailure(call, t);
+        }
+      });
+    };
+  }
+
+  // interface to enable retrofit
+  // call interception without altering
+  // existing code too much
+  private interface Enqueable<T> {
+    void enqueue(@NonNull Callback<T> callback);
   }
 
   // retrofit callback implementation with retry policy
