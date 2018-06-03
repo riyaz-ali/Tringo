@@ -3,4 +3,5 @@
 
   <!-- content descriptions -->
   <string name="desc.movie_poster">Movie Poster</string>
+  <string name="loading">Loading…</string>
 </resources>
