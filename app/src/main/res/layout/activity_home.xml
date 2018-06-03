@@ -41,9 +41,54 @@
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="36dp"
-        android:theme="@style/Tringo.FilterContainer">
+        android:padding="2dp"
+        android:theme="@style/Tringo.FilterContainer"
+        app:contentInsetStart="0dp">
 
-      <!-- TODO: Add filter options here -->
+      <ImageView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:src="@drawable/ic_filter"
+          android:layout_margin="4dp"
+          android:contentDescription="@string/desc.filter_movies" />
+
+      <HorizontalScrollView
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+          <CheckedTextView
+              android:id="@+id/filter.popular_movies"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/filter.popular_movies"
+              style="@style/Tringo.Filter" />
+
+          <CheckedTextView
+              android:id="@+id/filter.top_rated_movies"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/filter.top_rated_movies"
+              style="@style/Tringo.Filter" />
+
+          <CheckedTextView
+              android:id="@+id/filter.now_playing"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/filter.now_playing"
+              style="@style/Tringo.Filter" />
+
+          <CheckedTextView
+              android:id="@+id/filter.upcoming"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/filter.upcoming"
+              style="@style/Tringo.Filter" />
+        </LinearLayout>
+      </HorizontalScrollView>
     </android.support.v7.widget.Toolbar>
   </android.support.design.widget.AppBarLayout>
 

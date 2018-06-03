@@ -7,7 +7,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.CheckedTextView;
+import butterknife.BindViews;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.iamriyaz.tringo.adapter.MovieAdapter;
+import java.util.List;
 
 import static com.iamriyaz.tringo.data.sources.MoviesDataSource.MODE_POPULAR;
 
@@ -19,9 +24,23 @@ import static com.iamriyaz.tringo.data.sources.MoviesDataSource.MODE_POPULAR;
  */
 public class HomeActivity extends AppCompatActivity {
 
+  @BindViews({
+      R.id.filter_popular_movies,
+      R.id.filter_top_rated_movies,
+      R.id.filter_now_playing,
+      R.id.filter_upcoming
+  }) List<CheckedTextView> filters;
+
+  private CheckedTextView previousFilter = null;
+
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_home);
+
+    ButterKnife.bind(this);
+
+    // set default filter
+    setFilter(findViewById(R.id.filter_popular_movies));
 
     // setup recycler view
     RecyclerView recycler = findViewById(R.id.movies);
@@ -47,5 +66,19 @@ public class HomeActivity extends AppCompatActivity {
 
     // finally, add adapter to recycler view
     recycler.setAdapter(adapter);
+  }
+
+  @OnClick({
+      R.id.filter_popular_movies,
+      R.id.filter_top_rated_movies,
+      R.id.filter_now_playing,
+      R.id.filter_upcoming
+  }) public void setFilter(CheckedTextView selectedFilter){
+    if(selectedFilter == previousFilter)
+      return;
+    if(previousFilter != null)
+      previousFilter.setChecked(false);
+    selectedFilter.setChecked(true);
+    previousFilter = selectedFilter;
   }
 }
