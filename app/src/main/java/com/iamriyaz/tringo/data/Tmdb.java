@@ -41,6 +41,18 @@ public final class Tmdb {
      * @param page page number
      */
     @GET("movie/popular") Call<MovieResponse> getPopularMovies(@Query("page") int page);
+
+    /**
+     * Get upcoming movies
+     * @param page page number
+     */
+    @GET("movie/upcoming") Call<MovieResponse> getUpcomingMovies(@Query("page") int page);
+
+    /**
+     * Get now playing movies
+     * @param page page number
+     */
+    @GET("movie/now_playing") Call<MovieResponse> getNowPlayingMovies(@Query("page") int page);
   }
 
   /**

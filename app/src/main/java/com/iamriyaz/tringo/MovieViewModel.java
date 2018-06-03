@@ -58,11 +58,10 @@ public final class MovieViewModel extends ViewModel {
     movies.postValue(list);
   };
 
-  MovieViewModel(@NonNull Tmdb.Api api, int mode, @NonNull PagedList.Config config) {
+  MovieViewModel(@NonNull Tmdb.Api api, @NonNull PagedList.Config config) {
     this.api = api;
     this.config = config;
     this.mode.observeForever(modeChangeObserver);
-    this.mode.setValue(mode);
   }
 
   public LiveData<PagedList<Movie>> getMovies(){
@@ -71,6 +70,10 @@ public final class MovieViewModel extends ViewModel {
 
   public LiveData<State> getLiveNetworkState(){
     return network;
+  }
+
+  public void changeMode(@MoviesDataSource.DataSourceMode int mode){
+    this.mode.setValue(mode);
   }
 
   @Override protected void onCleared() {
@@ -83,19 +86,16 @@ public final class MovieViewModel extends ViewModel {
    */
   public static class Factory implements ViewModelProvider.Factory {
     private Tmdb.Api api;
-    private int mode;
     private PagedList.Config config;
 
-    public Factory(@NonNull Tmdb.Api api, @MoviesDataSource.DataSourceMode int mode,
-        @NonNull PagedList.Config config){
+    public Factory(@NonNull Tmdb.Api api, @NonNull PagedList.Config config){
       this.api = api;
-      this.mode = mode;
       this.config = config;
     }
 
     @SuppressWarnings("unchecked") @NonNull @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-      return (T) new MovieViewModel(api, mode, config);
+      return (T) new MovieViewModel(api, config);
     }
   }
 

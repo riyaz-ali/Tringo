@@ -3,5 +3,13 @@
 
   <!-- content descriptions -->
   <string name="desc.movie_poster">Movie Poster</string>
+  <string name="desc.filter_movies">Filter movies</string>
+
   <string name="loading">Loading…</string>
+
+  <!-- filters -->
+  <string name="filter.popular_movies">Popular</string>
+  <string name="filter.top_rated_movies">Top rated</string>
+  <string name="filter.now_playing">Now playing</string>
+  <string name="filter.upcoming">Upcoming</string>
 </resources>

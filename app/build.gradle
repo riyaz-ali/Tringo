@@ -57,6 +57,7 @@ dependencies {
   // Android support libraries
   implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
   implementation "com.android.support:cardview-v7:$supportLibraryVersion"
+  implementation "com.android.support:design:$supportLibraryVersion"
 
   // ViewModel and Livedata
   implementation "android.arch.lifecycle:extensions:1.1.1"
