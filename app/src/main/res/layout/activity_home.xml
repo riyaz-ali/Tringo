@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical"
+    tools:context="com.iamriyaz.tringo.HomeActivity">
+
+  <android.support.v7.widget.Toolbar
+      android:id="@+id/toolbar"
+      android:layout_width="match_parent"
+      android:layout_height="?attr/actionBarSize"
+      app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/thick_accent_bottom_border"
+        android:paddingBottom="6dp"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:text="@string/app.name"
+        android:textColor="#000"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+  </android.support.v7.widget.Toolbar>
+
+  <android.support.v7.widget.RecyclerView
+      android:id="@+id/movies"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1"
+      app:layoutManager="android.support.v7.widget.GridLayoutManager"
+      app:spanCount="2"
+      android:paddingLeft="2dp"
+      android:paddingRight="2dp"
+      tools:listitem="@layout/adapter_movie_item" />
+</LinearLayout>

@@ -1,3 +1,6 @@
 <resources>
-  <string name="app_name">Tringo</string>
+  <string name="app.name">tRingo</string>
+
+  <!-- content descriptions -->
+  <string name="desc.movie_poster">Movie Poster</string>
 </resources>
