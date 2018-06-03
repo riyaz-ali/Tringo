@@ -71,8 +71,22 @@ public class HomeActivity extends AppCompatActivity {
     // finally, add adapter to recycler view
     recycler.setAdapter(adapter);
 
-    // set default filter
-    setFilter(findViewById(R.id.filter_popular_movies));
+    if(null == savedInstanceState) {
+      // set default filter
+      setFilter(findViewById(R.id.filter_popular_movies));
+    } else {
+      // restoring state!
+      // set current filter to previously selected on
+      int id = savedInstanceState.getInt("FILTER");
+      for(CheckedTextView filter : filters)
+        if(filter.getId() == id)
+          currentFilter = filter;
+    }
+  }
+
+  @Override protected void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putInt("FILTER", currentFilter.getId());
   }
 
   @OnClick({
