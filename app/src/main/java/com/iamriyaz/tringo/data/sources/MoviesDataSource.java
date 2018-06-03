@@ -31,8 +31,10 @@ public final class MoviesDataSource extends PageKeyedDataSource<Integer, Movie> 
   // data source modes
   public static final int MODE_POPULAR = 0x1;
   public static final int MODE_TOP_RATED = 0x2;
+  public static final int MODE_NOW_PLAYING = 0x3;
+  public static final int MODE_UPCOMING = 0x4;
 
-  @IntDef({ MODE_POPULAR, MODE_TOP_RATED })
+  @IntDef({ MODE_POPULAR, MODE_TOP_RATED, MODE_NOW_PLAYING, MODE_UPCOMING })
   public @interface DataSourceMode {}
 
   // data source's current mode
@@ -115,8 +117,14 @@ public final class MoviesDataSource extends PageKeyedDataSource<Integer, Movie> 
     Call<MovieResponse> call;
     if(mode == MODE_POPULAR)
       call = tmdbApi.getPopularMovies(page);
-    else
+    else if(mode == MODE_TOP_RATED)
       call = tmdbApi.getTopRatedMovies(page);
+    else if(mode == MODE_NOW_PLAYING)
+      call = tmdbApi.getNowPlayingMovies(page);
+    else if(mode == MODE_UPCOMING)
+      call = tmdbApi.getUpcomingMovies(page);
+    else
+      throw new IllegalArgumentException("unknown mode");
 
     // move to loading state
     networkListener.onNetworkStateChange(NetworkListener.LOADING);
