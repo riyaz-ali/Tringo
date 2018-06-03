@@ -7,4 +7,8 @@
     <item name="colorAccent">@color/colorAccent</item>
   </style>
 
+  <!-- Theme for filter container -->
+  <style name="Tringo.FilterContainer" parent="ThemeOverlay.AppCompat.Light">
+    <item name="android:background">@color/lightGrey</item>
+  </style>
 </resources>
