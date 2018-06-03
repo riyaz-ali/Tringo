@@ -3,7 +3,8 @@ package com.iamriyaz.tringo.adapter;
 import android.arch.paging.PagedListAdapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,24 +13,25 @@ import com.iamriyaz.tringo.NetworkListener;
 import com.iamriyaz.tringo.R;
 import com.iamriyaz.tringo.data.Tmdb;
 import com.squareup.picasso.Picasso;
-import timber.log.Timber;
 
 import static com.iamriyaz.tringo.Utils.aspect;
 import static com.iamriyaz.tringo.Utils.calculateOtherDimension;
 import static com.iamriyaz.tringo.Utils.createTmdbImageUrl;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Created on 30 May, 2018
  *
+ * adapted from https://is.gd/Kshqfr
  * @author Riyaz
  */
-public class MovieAdapter extends PagedListAdapter<Tmdb.Movie, MovieAdapter.ViewHolder> {
+public class MovieAdapter extends PagedListAdapter<Tmdb.Movie, ViewHolder> {
 
-  // ViewHolder implementation
-  class ViewHolder extends RecyclerView.ViewHolder {
+  // ViewHolder implementation for Movie
+  class MovieViewHolder extends ViewHolder {
     ImageView poster;
 
-    ViewHolder(View itemView) {
+    MovieViewHolder(View itemView) {
       super(itemView);
       poster = itemView.findViewById(R.id.movie_poster);
     }
@@ -45,7 +47,22 @@ public class MovieAdapter extends PagedListAdapter<Tmdb.Movie, MovieAdapter.View
     }
   }
 
+  // ViewHolder implementation for network
+  class NetworkViewHolder extends ViewHolder {
+    public NetworkViewHolder(View itemView) {
+      super(itemView);
+    }
+
+    void bind(@Nullable NetworkListener.State state){
+
+    }
+  }
+
+  // layout inflater
   private final LayoutInflater inflater;
+
+  // state of network
+  private NetworkListener.State networkState = null;
 
   /**
    * Create new movie adapter
@@ -57,21 +74,54 @@ public class MovieAdapter extends PagedListAdapter<Tmdb.Movie, MovieAdapter.View
 
   @NonNull @Override
   public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-    return new ViewHolder(inflater.inflate(R.layout.adapter_movie_item, parent, false));
+    if(R.layout.adapter_network_item == viewType)
+      return new NetworkViewHolder(inflater.inflate(R.layout.adapter_network_item, parent, false));
+    else if(R.layout.adapter_movie_item == viewType)
+      return new MovieViewHolder(inflater.inflate(R.layout.adapter_movie_item, parent, false));
+    else
+      throw new IllegalArgumentException("unknown view type");
   }
 
   @Override public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-    if(null != getItem(position)) //noinspection ConstantConditions
-      holder.bind(getItem(position));
+    if(R.layout.adapter_network_item == getItemViewType(position))
+      ((NetworkViewHolder) holder).bind(networkState);
+    else
+      ((MovieViewHolder) holder).bind(requireNonNull(getItem(position)));
+  }
+
+  @Override public int getItemCount() {
+    return super.getItemCount() + (hasExtraRow()? 1 : 0);
+  }
+
+  @Override public int getItemViewType(int position) {
+    if(hasExtraRow() && position == getItemCount() - 1)
+      return R.layout.adapter_network_item;
+    else
+      return R.layout.adapter_movie_item;
   }
 
   /**
    * Change network state which is then reflected in the UI
    *
-   * @param state new network state
+   * @param current new network state
    */
-  public void setNetworkState(@NonNull NetworkListener.State state){
-    // TODO: update UI on state change
-    Timber.d("Network state changed: %s", state);
+  public void setNetworkState(@NonNull NetworkListener.State current){
+    NetworkListener.State previous = this.networkState;
+    boolean hadExtraRow = hasExtraRow();
+    this.networkState = current;
+    boolean hasExtraRow = hasExtraRow();
+    if(hadExtraRow != hasExtraRow){
+      if(hadExtraRow)
+        notifyItemRemoved(super.getItemCount());
+      else
+        notifyItemInserted(super.getItemCount());
+    } else if(hasExtraRow && previous != current) {
+      notifyItemChanged(getItemCount() - 1);
+    }
+  }
+
+  // Got an extra row?
+  private boolean hasExtraRow(){
+    return networkState != null && networkState != NetworkListener.LOADED;
   }
 }
