@@ -10,7 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import com.iamriyaz.tringo.adapter.MovieAdapter;
-import com.iamriyaz.tringo.data.Movie;
+import com.iamriyaz.tringo.data.Tmdb;
 import com.iamriyaz.tringo.data.sources.MoviesDataSource;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -37,7 +37,7 @@ public class HomeActivity extends AppCompatActivity {
     RecyclerView recycler = findViewById(R.id.movies);
     recycler.setLayoutManager(new GridLayoutManager(this, 2));
     // create new movie adapter
-    adapter = new MovieAdapter(this, Movie.DIFF_CALLBACK);
+    adapter = new MovieAdapter(this);
     // add adapter to recyclerview
     recycler.setAdapter(adapter);
 
@@ -55,7 +55,7 @@ public class HomeActivity extends AppCompatActivity {
         .setPageSize(10)
         .setPrefetchDistance(5).build();
     // create paged list
-    PagedList<Movie> pagedList = new PagedList.Builder<>(dataSource, config)
+    PagedList<Tmdb.Movie> pagedList = new PagedList.Builder<>(dataSource, config)
         // get list notifications on Ui thread
         .setNotifyExecutor(new UiThreadExecutor())
         // execute fetches on a background thread

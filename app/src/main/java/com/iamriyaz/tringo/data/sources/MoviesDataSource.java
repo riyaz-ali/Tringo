@@ -5,8 +5,6 @@ import android.arch.paging.PageKeyedDataSource;
 import android.os.Handler;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-import com.iamriyaz.tringo.data.Movie;
-import com.iamriyaz.tringo.data.MovieResponse;
 import com.iamriyaz.tringo.data.Tmdb;
 import java.util.Collections;
 import retrofit2.Call;
@@ -14,6 +12,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 
+import static com.iamriyaz.tringo.data.Tmdb.Movie;
+import static com.iamriyaz.tringo.data.Tmdb.MovieResponse;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -45,10 +45,10 @@ public final class MoviesDataSource extends PageKeyedDataSource<Integer, Movie> 
   }
 
   @Override public void loadInitial(@NonNull LoadInitialParams<Integer> params,
-      @NonNull LoadInitialCallback<Integer, Movie> callback) {
+      @NonNull LoadInitialCallback<Integer, Tmdb.Movie> callback) {
 
-    create(1 /* page */).enqueue(new CallbackWithRetry<MovieResponse>(MAX_RETRY) {
-      @Override public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
+    create(1 /* page */).enqueue(new CallbackWithRetry<Tmdb.MovieResponse>(MAX_RETRY) {
+      @Override public void onResponse(Call<Tmdb.MovieResponse> call, Response<MovieResponse> response) {
         if (response.isSuccessful()) {
           MovieResponse movieResponse = requireNonNull(response.body());
           callback.onResult(movieResponse.getMovies(), null,

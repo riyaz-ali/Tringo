@@ -3,14 +3,13 @@ package com.iamriyaz.tringo.adapter;
 import android.arch.paging.PagedListAdapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.iamriyaz.tringo.R;
-import com.iamriyaz.tringo.data.Movie;
+import com.iamriyaz.tringo.data.Tmdb;
 import com.squareup.picasso.Picasso;
 
 import static com.iamriyaz.tringo.Utils.aspect;
@@ -22,7 +21,7 @@ import static com.iamriyaz.tringo.Utils.createTmdbImageUrl;
  *
  * @author Riyaz
  */
-public class MovieAdapter extends PagedListAdapter<Movie, MovieAdapter.ViewHolder> {
+public class MovieAdapter extends PagedListAdapter<Tmdb.Movie, MovieAdapter.ViewHolder> {
 
   // ViewHolder implementation
   class ViewHolder extends RecyclerView.ViewHolder {
@@ -34,7 +33,7 @@ public class MovieAdapter extends PagedListAdapter<Movie, MovieAdapter.ViewHolde
     }
 
     // bind data to the view
-    void bind(@NonNull Movie movie) {
+    void bind(@NonNull Tmdb.Movie movie) {
       // height can be made dynamic later to support high density devices
       Picasso.get()
           .load(createTmdbImageUrl(movie.getPoster(), 300,
@@ -49,8 +48,8 @@ public class MovieAdapter extends PagedListAdapter<Movie, MovieAdapter.ViewHolde
   /**
    * Create new movie adapter
    */
-  public MovieAdapter(@NonNull Context context, @NonNull DiffUtil.ItemCallback<Movie> diffCallback) {
-    super(diffCallback);
+  public MovieAdapter(@NonNull Context context) {
+    super(Tmdb.Movie.DIFF_CALLBACK);
     inflater = LayoutInflater.from(context);
   }
 
