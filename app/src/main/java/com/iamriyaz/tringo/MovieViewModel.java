@@ -1,13 +1,17 @@
 package com.iamriyaz.tringo;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.paging.PagedList;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import com.iamriyaz.tringo.NetworkListener.State;
 import com.iamriyaz.tringo.data.Tmdb;
+import com.iamriyaz.tringo.data.Tmdb.Movie;
 import com.iamriyaz.tringo.data.sources.MoviesDataSource;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -20,11 +24,19 @@ import java.util.concurrent.Executors;
  * @author Riyaz
  */
 public final class MovieViewModel extends ViewModel {
+  // tmdb api
+  private Tmdb.Api api;
+  // paging config
+  private PagedList.Config config;
+
   // movie data source
-  private PagedList movies;
+  private MutableLiveData<PagedList<Movie>> movies = new MutableLiveData<>();
+
+  // TMDb API mode
+  private MutableLiveData<Integer> mode = new MutableLiveData<>();
 
   // live network state
-  private MutableLiveData<NetworkListener.State> network = new MutableLiveData<>();
+  private MutableLiveData<State> network = new MutableLiveData<>();
 
   // network state listener
   private final NetworkListener networkListener = new NetworkListener() {
@@ -33,15 +45,37 @@ public final class MovieViewModel extends ViewModel {
     }
   };
 
-  MovieViewModel(@NonNull Tmdb.Api api, int mode, @NonNull PagedList.Config config) {
-    MoviesDataSource dataSource = new MoviesDataSource(api, mode, networkListener);
-    this.movies = new PagedList.Builder<>(dataSource, config)
+  @SuppressWarnings("ConstantConditions")
+  private final Observer<Integer> modeChangeObserver = _mode -> {
+    MoviesDataSource dataSource = new MoviesDataSource(api, _mode, networkListener);
+    PagedList<Movie> list = new PagedList.Builder<>(dataSource, config)
         // get list notifications on Ui thread
         .setNotifyExecutor(new UiThreadExecutor())
         // execute fetches on a background thread
         .setFetchExecutor(new BackgroundThreadExecutor())
         // build!
         .build();
+    movies.postValue(list);
+  };
+
+  MovieViewModel(@NonNull Tmdb.Api api, int mode, @NonNull PagedList.Config config) {
+    this.api = api;
+    this.config = config;
+    this.mode.observeForever(modeChangeObserver);
+    this.mode.setValue(mode);
+  }
+
+  public LiveData<PagedList<Movie>> getMovies(){
+    return movies;
+  }
+
+  public LiveData<State> getLiveNetworkState(){
+    return network;
+  }
+
+  @Override protected void onCleared() {
+    super.onCleared();
+    this.mode.removeObserver(modeChangeObserver);
   }
 
   /**

@@ -8,9 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import com.iamriyaz.tringo.NetworkListener;
 import com.iamriyaz.tringo.R;
 import com.iamriyaz.tringo.data.Tmdb;
 import com.squareup.picasso.Picasso;
+import timber.log.Timber;
 
 import static com.iamriyaz.tringo.Utils.aspect;
 import static com.iamriyaz.tringo.Utils.calculateOtherDimension;
@@ -61,5 +63,15 @@ public class MovieAdapter extends PagedListAdapter<Tmdb.Movie, MovieAdapter.View
   @Override public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
     if(null != getItem(position)) //noinspection ConstantConditions
       holder.bind(getItem(position));
+  }
+
+  /**
+   * Change network state which is then reflected in the UI
+   *
+   * @param state new network state
+   */
+  public void setNetworkState(@NonNull NetworkListener.State state){
+    // TODO: update UI on state change
+    Timber.d("Network state changed: %s", state);
   }
 }
