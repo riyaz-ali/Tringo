@@ -27,13 +27,20 @@ import static java.util.Objects.requireNonNull;
  */
 public class MovieAdapter extends PagedListAdapter<Movie, ViewHolder> {
 
+  // Click listener
+  public interface OnClickListener {
+    // called when the movie poster is clicked
+    void onClick(@NonNull Movie movie, @NonNull View view);
+  }
+
   // ViewHolder implementation for Movie
-  class MovieViewHolder extends ViewHolder {
+  class MovieViewHolder extends ViewHolder implements View.OnClickListener {
     ImageView poster;
 
     MovieViewHolder(View itemView) {
       super(itemView);
       poster = itemView.findViewById(R.id.movie_poster);
+      itemView.setOnClickListener(this);
     }
 
     // bind data to the view
@@ -44,6 +51,10 @@ public class MovieAdapter extends PagedListAdapter<Movie, ViewHolder> {
               calculateOtherDimension(aspect(2, 3), 300)))
           .placeholder(R.drawable.placeholder)
           .into(poster);
+    }
+
+    @Override public void onClick(View v) {
+      clickListener.onClick(requireNonNull(getItem(getAdapterPosition())), v);
     }
   }
 
@@ -64,12 +75,16 @@ public class MovieAdapter extends PagedListAdapter<Movie, ViewHolder> {
   // state of network
   private NetworkListener.State networkState = null;
 
+  // click listener
+  private final OnClickListener clickListener;
+
   /**
    * Create new movie adapter
    */
-  public MovieAdapter(@NonNull Context context) {
+  public MovieAdapter(@NonNull Context context, @NonNull OnClickListener onClickListener) {
     super(Movie.DIFF_CALLBACK);
     inflater = LayoutInflater.from(context);
+    this.clickListener = requireNonNull(onClickListener);
   }
 
   @NonNull @Override
