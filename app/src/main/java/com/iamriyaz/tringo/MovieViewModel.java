@@ -11,7 +11,7 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import com.iamriyaz.tringo.NetworkListener.State;
 import com.iamriyaz.tringo.data.Tmdb;
-import com.iamriyaz.tringo.data.Tmdb.Movie;
+import com.iamriyaz.tringo.data.Movie;
 import com.iamriyaz.tringo.data.sources.MoviesDataSource;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;

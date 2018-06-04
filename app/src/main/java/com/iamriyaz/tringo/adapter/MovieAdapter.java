@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.iamriyaz.tringo.NetworkListener;
 import com.iamriyaz.tringo.R;
-import com.iamriyaz.tringo.data.Tmdb;
+import com.iamriyaz.tringo.data.Movie;
 import com.squareup.picasso.Picasso;
 
 import static com.iamriyaz.tringo.Utils.aspect;
@@ -25,7 +25,7 @@ import static java.util.Objects.requireNonNull;
  * adapted from https://is.gd/Kshqfr
  * @author Riyaz
  */
-public class MovieAdapter extends PagedListAdapter<Tmdb.Movie, ViewHolder> {
+public class MovieAdapter extends PagedListAdapter<Movie, ViewHolder> {
 
   // ViewHolder implementation for Movie
   class MovieViewHolder extends ViewHolder {
@@ -37,7 +37,7 @@ public class MovieAdapter extends PagedListAdapter<Tmdb.Movie, ViewHolder> {
     }
 
     // bind data to the view
-    void bind(@NonNull Tmdb.Movie movie) {
+    void bind(@NonNull Movie movie) {
       // height can be made dynamic later to support high density devices
       Picasso.get()
           .load(createTmdbImageUrl(movie.getPoster(), 300,
@@ -68,7 +68,7 @@ public class MovieAdapter extends PagedListAdapter<Tmdb.Movie, ViewHolder> {
    * Create new movie adapter
    */
   public MovieAdapter(@NonNull Context context) {
-    super(Tmdb.Movie.DIFF_CALLBACK);
+    super(Movie.DIFF_CALLBACK);
     inflater = LayoutInflater.from(context);
   }
 
