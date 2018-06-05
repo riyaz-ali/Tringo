@@ -1,3 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- https://stackoverflow.com/a/39870268/6611700 s-->
+<!DOCTYPE resources [
+    <!ENTITY minutes "min">
+    <!ENTITY outof  "/ 10">
+]>
 <resources>
   <string name="app.name">tRingo</string>
 
@@ -17,4 +23,8 @@
   <!-- movie details screen -->
   <string name="movie.overview">Overview</string>
   <string name="movie.invalid_id">Invalid movie id</string>
+  <string name="movie.runtime.stub">&minutes;</string>
+  <string name="movie.runtime">%d &minutes;</string>
+  <string name="movie.rating.stub">&outof;</string>
+  <string name="movie.rating">%1$.1f &outof;</string>
 </resources>
