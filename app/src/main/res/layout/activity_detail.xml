@@ -39,6 +39,11 @@
           android:src="@drawable/loading_gradient_indicator"
           android:foreground="#5000"
           android:scaleType="fitXY"/>
+
+      <android.support.v7.widget.Toolbar
+          android:id="@+id/movie_toolbar"
+          android:layout_width="wrap_content"
+          android:layout_height="?attr/actionBarSize" />
     </android.support.design.widget.CollapsingToolbarLayout>
   </android.support.design.widget.AppBarLayout>
 

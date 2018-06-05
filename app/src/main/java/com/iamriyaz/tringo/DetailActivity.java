@@ -9,11 +9,15 @@ import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,12 +35,15 @@ import retrofit2.Response;
 import static com.iamriyaz.tringo.Utils.aspect;
 import static com.iamriyaz.tringo.Utils.calculateOtherDimension;
 import static com.iamriyaz.tringo.Utils.createTmdbImageUrl;
+import static com.iamriyaz.tringo.Utils.createTmdbShareUrl;
 
 public class DetailActivity extends AppCompatActivity {
 
   private static final String KEY_MOVIE_ID = "TMDB.MOVIE_ID";
 
   private ActivityDetailBinding binding;
+
+  private MovieDetail current;
 
   public static Intent intent(@NonNull Context context, @NonNull Movie movie){
     return new Intent(context, DetailActivity.class)
@@ -47,6 +54,14 @@ public class DetailActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
 
     binding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
+
+    Toolbar toolbar = findViewById(R.id.movie_toolbar);
+    setSupportActionBar(toolbar);
+    ActionBar actionBar = getSupportActionBar();
+    if(null != actionBar){
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setDisplayShowTitleEnabled(false);
+    }
 
     ImageView backdrop = findViewById(R.id.movie_backdrop);
     ((AnimationDrawable) backdrop.getDrawable()).start();
@@ -80,7 +95,32 @@ public class DetailActivity extends AppCompatActivity {
         });
   }
 
+  @Override public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.share_movie, menu);
+    return true;
+  }
+
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    if(android.R.id.home == item.getItemId()) {
+      onBackPressed();
+      return true;
+    } else if(R.id.menu_share_movie == item.getItemId() && null != current){
+      Intent share = new Intent(Intent.ACTION_SEND);
+      share.setType("text/plain");
+      share.putExtra(Intent.EXTRA_TEXT, createTmdbShareUrl(current));
+
+      Intent chooser = Intent.createChooser(share, getString(R.string.movie_share_via));
+      if(null != chooser.resolveActivity(getPackageManager())){
+        startActivity(chooser);
+      }
+      return true;
+    } else {
+      return super.onOptionsItemSelected(item);
+    }
+  }
+
   private void render(@NonNull MovieDetail movie){
+    current = movie;
     binding.setMovie(movie);
 
     Picasso picasso = Picasso.get();
