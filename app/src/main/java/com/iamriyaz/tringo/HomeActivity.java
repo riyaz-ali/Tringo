@@ -3,8 +3,10 @@ package com.iamriyaz.tringo;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -124,6 +126,10 @@ public class HomeActivity extends AppCompatActivity implements MovieAdapter.OnCl
   }
 
   @Override public void onClick(@NonNull Movie movie, @NonNull View view) {
-    startActivity(DetailActivity.intent(this, movie));
+    Intent intent = DetailActivity.intent(this, movie);
+    //noinspection unchecked
+    String transitionName = getString(R.string.tranistion_shared_movie_poster);
+    ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, view, transitionName);
+    startActivity(intent, options.toBundle());
   }
 }

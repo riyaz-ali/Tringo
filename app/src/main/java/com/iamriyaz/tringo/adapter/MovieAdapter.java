@@ -40,7 +40,7 @@ public class MovieAdapter extends PagedListAdapter<Movie, ViewHolder> {
     MovieViewHolder(View itemView) {
       super(itemView);
       poster = itemView.findViewById(R.id.movie_poster);
-      itemView.setOnClickListener(this);
+      poster.setOnClickListener(this);
     }
 
     // bind data to the view

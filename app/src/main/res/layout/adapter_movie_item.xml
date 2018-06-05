@@ -17,5 +17,6 @@
       android:scaleType="fitXY"
       android:adjustViewBounds="true"
       tools:src="@color/colorAccent"
+      android:transitionName="@string/tranistion.shared.movie_poster"
       android:contentDescription="@string/desc.movie_poster" />
 </android.support.v7.widget.CardView>
