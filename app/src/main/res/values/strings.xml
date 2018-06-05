@@ -4,6 +4,7 @@
   <!-- content descriptions -->
   <string name="desc.movie_poster">Movie Poster</string>
   <string name="desc.filter_movies">Filter movies</string>
+  <string name="desc.movie_backdrop_image">Movie backdrop image</string>
 
   <string name="loading">Loading…</string>
 
@@ -12,4 +13,7 @@
   <string name="filter.top_rated_movies">Top rated</string>
   <string name="filter.now_playing">Now playing</string>
   <string name="filter.upcoming">Upcoming</string>
+
+  <!-- movie details screen -->
+  <string name="movie.overview">Overview</string>
 </resources>

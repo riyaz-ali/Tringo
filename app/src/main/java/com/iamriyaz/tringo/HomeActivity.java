@@ -17,7 +17,6 @@ import com.iamriyaz.tringo.adapter.MovieAdapter;
 import com.iamriyaz.tringo.data.Movie;
 import com.iamriyaz.tringo.data.sources.MoviesDataSource;
 import java.util.List;
-import timber.log.Timber;
 
 import static com.iamriyaz.tringo.data.sources.MoviesDataSource.MODE_NOW_PLAYING;
 import static com.iamriyaz.tringo.data.sources.MoviesDataSource.MODE_POPULAR;
@@ -125,7 +124,6 @@ public class HomeActivity extends AppCompatActivity implements MovieAdapter.OnCl
   }
 
   @Override public void onClick(@NonNull Movie movie, @NonNull View view) {
-    // TODO: Open details view
-    Timber.d("Movie selected: %s", movie);
+    startActivity(DetailActivity.intent(this, movie));
   }
 }
