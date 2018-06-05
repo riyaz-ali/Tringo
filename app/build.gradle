@@ -51,7 +51,7 @@ android {
 }
 
 ext {
-  supportLibraryVersion = "27.1.0"
+  supportLibraryVersion = "27.1.1"
 }
 
 dependencies {
@@ -87,7 +87,9 @@ dependencies {
   annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
   // Picasso
-  implementation 'com.squareup.picasso:picasso:2.71828'
+  implementation ('com.squareup.picasso:picasso:2.71828'){
+    exclude group: 'com.android.support'
+  }
 
   // Facebook Stetho to debug network calls in debug builds
   debugImplementation 'com.facebook.stetho:stetho:1.5.0'
