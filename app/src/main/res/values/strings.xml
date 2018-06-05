@@ -16,4 +16,5 @@
 
   <!-- movie details screen -->
   <string name="movie.overview">Overview</string>
+  <string name="movie.invalid_id">Invalid movie id</string>
 </resources>

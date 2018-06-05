@@ -1,6 +1,8 @@
 package com.iamriyaz.tringo.data;
 
 import android.support.annotation.NonNull;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 import com.iamriyaz.tringo.StethoUtils;
 import java.io.IOException;
@@ -14,6 +16,7 @@ import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -51,6 +54,11 @@ public final class Tmdb {
      * @param page page number
      */
     @GET("movie/now_playing") Call<MovieResponse> getNowPlayingMovies(@Query("page") int page);
+
+    /**
+     * Get movie by id
+     */
+    @GET("movie/{id}") Call<MovieDetail> getMovieById(@Path("id") long id);
   }
 
   /**
@@ -67,11 +75,16 @@ public final class Tmdb {
     // it injects stetho interceptor in debug build else does nothing!
     StethoUtils.inject(okHttpClient);
 
+    // custom GSON instance with date format
+    Gson gson = new GsonBuilder()
+        .setDateFormat("yyyy-mm-dd")  // used for release date
+        .create();
+
     // build retrofit
     Retrofit retrofit = new Retrofit.Builder()
         .client(okHttpClient.build())
         .baseUrl(base)
-        .addConverterFactory(GsonConverterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create(gson))
         .build();
 
     // create the service
