@@ -20,12 +20,17 @@ import android.widget.Toast;
 import com.iamriyaz.tringo.data.Movie;
 import com.iamriyaz.tringo.data.MovieDetail;
 import com.iamriyaz.tringo.databinding.ActivityDetailBinding;
+import com.squareup.picasso.Picasso;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Objects;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.iamriyaz.tringo.Utils.aspect;
+import static com.iamriyaz.tringo.Utils.calculateOtherDimension;
+import static com.iamriyaz.tringo.Utils.createTmdbImageUrl;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -77,6 +82,17 @@ public class DetailActivity extends AppCompatActivity {
 
   private void render(@NonNull MovieDetail movie){
     binding.setMovie(movie);
+
+    Picasso picasso = Picasso.get();
+
+    // load backdrop
+    picasso.load(
+        createTmdbImageUrl(movie.getBackdrop(), 224, calculateOtherDimension(aspect(2, 3), 224))
+    ).placeholder(R.drawable.loading_gradient_indicator).into(binding.movieBackdrop);
+
+    picasso.load(
+        createTmdbImageUrl(movie.getPoster(), 130, calculateOtherDimension(aspect(11, 13), 130))
+    ).placeholder(R.drawable.loading_gradient_indicator).into(binding.moviePoster);
   }
 
   // DataBinding formatting utilities
