@@ -2,6 +2,7 @@ package com.iamriyaz.tringo;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import com.iamriyaz.tringo.data.MovieDetail;
 
 /**
  * Created on 31 May, 2018
@@ -46,5 +47,11 @@ public final class Utils {
         .appendQueryParameter("resize_w", "" + width)
         .appendQueryParameter("url", tmdbUrl(poster))
         .toString();
+  }
+
+  @NonNull public static String createTmdbShareUrl(@NonNull MovieDetail movie){
+    return String.format(
+        "https://www.themoviedb.org/redirect?external_source=imdb_id&external_id=%s",
+        movie.getImdb());
   }
 }

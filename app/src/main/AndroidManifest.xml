@@ -3,8 +3,7 @@
     package="com.iamriyaz.tringo">
 
   <!-- permissions -->
-  <uses-permission android:name="android.permission.INTERNET" />
-
+  <uses-permission android:name="android.permission.INTERNET"/>
 
   <application
       android:name=".Tringo"
@@ -19,6 +18,8 @@
 
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
+    </activity>
+    <activity android:name=".DetailActivity">
     </activity>
   </application>
 

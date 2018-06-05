@@ -4,14 +4,17 @@ import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.CheckedTextView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.iamriyaz.tringo.adapter.MovieAdapter;
+import com.iamriyaz.tringo.data.Movie;
 import com.iamriyaz.tringo.data.sources.MoviesDataSource;
 import java.util.List;
 
@@ -26,7 +29,7 @@ import static com.iamriyaz.tringo.data.sources.MoviesDataSource.MODE_UPCOMING;
  * The {@link android.arch.paging Android Support Paging} implementation is adapted from
  * https://medium.com/@anvith/paging-android-architecture-components-3134212b83bb
  */
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements MovieAdapter.OnClickListener {
 
   @BindViews({
       R.id.filter_popular_movies,
@@ -62,7 +65,7 @@ public class HomeActivity extends AppCompatActivity {
         .get(MovieViewModel.class);
 
     // create new movie adapter
-    MovieAdapter adapter = new MovieAdapter(this);
+    MovieAdapter adapter = new MovieAdapter(this, this);
     // add list to adapter
     vm.getMovies().observe(this, adapter::submitList);
     // bind to network changes
@@ -118,5 +121,9 @@ public class HomeActivity extends AppCompatActivity {
       return MODE_UPCOMING;
     else
       throw new IllegalArgumentException("unknown filter");
+  }
+
+  @Override public void onClick(@NonNull Movie movie, @NonNull View view) {
+    startActivity(DetailActivity.intent(this, movie));
   }
 }
