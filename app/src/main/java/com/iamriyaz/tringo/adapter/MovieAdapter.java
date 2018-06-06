@@ -53,7 +53,7 @@ public class MovieAdapter extends PagedListAdapter<Movie, ViewHolder> {
       Picasso.get()
           .load(createTmdbImageUrl(movie.getPoster(), 300,
               calculateOtherDimension(aspect(2, 3), 300)))
-          .placeholder(R.drawable.placeholder)
+          .placeholder(R.drawable.loading_gradient_indicator)
           .into(poster);
     }
 

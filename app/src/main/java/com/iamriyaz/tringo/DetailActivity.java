@@ -143,7 +143,7 @@ public class DetailActivity extends AppCompatActivity {
 
     // load backdrop
     picasso.load(
-        createTmdbImageUrl(movie.getBackdrop(), 224, calculateOtherDimension(aspect(2, 3), 224))
+        createTmdbImageUrl(movie.getBackdrop(), 224, calculateOtherDimension(aspect(4, 3), 224))
     ).placeholder(R.drawable.loading_gradient_indicator).into(binding.movieBackdrop);
 
     picasso.load(
