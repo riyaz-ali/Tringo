@@ -4,13 +4,18 @@ import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
 import android.arch.paging.PagedList;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.ChangeBounds;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.CheckedTextView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
@@ -76,6 +81,10 @@ public class HomeActivity extends AppCompatActivity implements MovieAdapter.OnCl
     // finally, add adapter to recycler view
     recycler.setAdapter(adapter);
 
+    // setup element transition
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+      enableTransitions();
+
     if(null == savedInstanceState) {
       // set default filter
       setFilter(findViewById(R.id.filter_popular_movies));
@@ -127,9 +136,17 @@ public class HomeActivity extends AppCompatActivity implements MovieAdapter.OnCl
 
   @Override public void onClick(@NonNull Movie movie, @NonNull View view) {
     Intent intent = DetailActivity.intent(this, movie);
-    //noinspection unchecked
-    String transitionName = getString(R.string.tranistion_shared_movie_poster);
-    ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, view, transitionName);
+    intent.putExtra(DetailActivity.KEY_TRANSITION_NAME, ViewCompat.getTransitionName(view));
+
+    ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, view,
+        ViewCompat.getTransitionName(view));
     startActivity(intent, options.toBundle());
+  }
+
+  @RequiresApi(Build.VERSION_CODES.LOLLIPOP) private void enableTransitions(){
+    ChangeBounds changeBounds = new ChangeBounds();
+    changeBounds.setDuration(500);
+    changeBounds.setInterpolator(new AccelerateInterpolator());
+    getWindow().setSharedElementExitTransition(changeBounds);
   }
 }

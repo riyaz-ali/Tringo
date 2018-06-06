@@ -4,6 +4,7 @@ import android.arch.paging.PagedListAdapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,6 +46,9 @@ public class MovieAdapter extends PagedListAdapter<Movie, ViewHolder> {
 
     // bind data to the view
     void bind(@NonNull Movie movie) {
+      // set transition name for shared element transition
+      ViewCompat.setTransitionName(poster, "" + movie.getId());
+
       // height can be made dynamic later to support high density devices
       Picasso.get()
           .load(createTmdbImageUrl(movie.getPoster(), 300,

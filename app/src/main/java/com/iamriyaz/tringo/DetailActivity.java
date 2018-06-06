@@ -6,9 +6,11 @@ import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,8 +18,10 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
+import android.transition.ChangeBounds;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,7 +43,9 @@ import static com.iamriyaz.tringo.Utils.createTmdbShareUrl;
 
 public class DetailActivity extends AppCompatActivity {
 
-  private static final String KEY_MOVIE_ID = "TMDB.MOVIE_ID";
+  // Keys
+  public static final String KEY_MOVIE_ID = "TMDB.MOVIE_ID";
+  public static final String KEY_TRANSITION_NAME = "TMDB.TRANSITION_NAME";
 
   private ActivityDetailBinding binding;
 
@@ -69,12 +75,22 @@ public class DetailActivity extends AppCompatActivity {
     ImageView poster = findViewById(R.id.movie_poster);
     ((AnimationDrawable) poster.getDrawable()).start();
 
+    // shared element transition on poster
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      if (null != getIntent().getStringExtra(KEY_TRANSITION_NAME)){
+        poster.setTransitionName(getIntent().getStringExtra(KEY_TRANSITION_NAME));
+      }
+    }
+
     long id = getIntent().getLongExtra(KEY_MOVIE_ID, -1L);
     if(-1 == id){
       finish();
       Toast.makeText(this, R.string.movie_invalid_id, Toast.LENGTH_SHORT).show();
       return;
     }
+
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+      enableTransitions();
 
     Tringo.api(this)
         .getMovieById(id)
@@ -135,6 +151,12 @@ public class DetailActivity extends AppCompatActivity {
     ).placeholder(R.drawable.loading_gradient_indicator).into(binding.moviePoster);
   }
 
+  @RequiresApi(Build.VERSION_CODES.LOLLIPOP) private void enableTransitions(){
+    ChangeBounds changeBounds = new ChangeBounds();
+    changeBounds.setDuration(500);
+    changeBounds.setInterpolator(new DecelerateInterpolator());
+    getWindow().setSharedElementEnterTransition(changeBounds);
+  }
   // DataBinding formatting utilities
   public static class FormatUtils {
 
