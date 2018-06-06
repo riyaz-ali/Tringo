@@ -4,6 +4,11 @@ Tringo is a client for the [**TMDB**](https://www.themoviedb.org) movies API ser
 of the [Udacity Android Nanodegree](https://in.udacity.com/course/android-developer-nanodegree-by-google--nd801)
 project.
 
+<div style="display:flex">
+  <img src="images/home.png" height="480px" width="270px" />
+  <img src="images/details.png" height="480px" width="270px" />
+</div>
+
 ## Building
 
 To build and run Tringo follow these steps:
