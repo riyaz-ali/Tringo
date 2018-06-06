@@ -1,3 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- https://stackoverflow.com/a/39870268/6611700 s-->
+<!DOCTYPE resources [
+    <!ENTITY minutes "min">
+    <!ENTITY outof  "/ 10">
+]>
 <resources>
-  <string name="app_name">Tringo</string>
+  <string name="app.name">tRingo</string>
+
+  <!-- content descriptions -->
+  <string name="desc.movie_poster">Movie Poster</string>
+  <string name="desc.filter_movies">Filter movies</string>
+  <string name="desc.movie_backdrop_image">Movie backdrop image</string>
+
+  <string name="loading">Loading…</string>
+
+  <!-- filters -->
+  <string name="filter.popular_movies">Popular</string>
+  <string name="filter.top_rated_movies">Top rated</string>
+  <string name="filter.now_playing">Now playing</string>
+  <string name="filter.upcoming">Upcoming</string>
+
+  <!-- movie details screen -->
+  <string name="movie.overview">Overview</string>
+  <string name="movie.invalid_id">Invalid movie id</string>
+  <string name="movie.runtime.stub">&minutes;</string>
+  <string name="movie.runtime">%d &minutes;</string>
+  <string name="movie.rating.stub">&outof;</string>
+  <string name="movie.rating">%1$.1f &outof;</string>
+  <string name="movie.share_movie">Share movie</string>
+  <string name="movie.share_via">Share via</string>
+
+  <!-- Shared element for transition -->
+  <string name="tranistion.shared.movie_poster">shared_movie_poster_element</string>
 </resources>

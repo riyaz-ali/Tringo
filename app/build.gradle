@@ -1,11 +1,12 @@
 apply plugin: 'com.android.application'
 
-def getApiKey(String id){
+def getApiKey(String id) {
   FileInputStream fis = new FileInputStream(rootProject.file("local.properties"))
   Properties properties = new Properties()
   properties.load(fis)
-  if(null == properties[id])
+  if (null == properties[id]) {
     throw new Error(String.format("Missing required property: '%s'", id))
+  }
   return '"' + properties.get(id) + '"'
 }
 
@@ -26,12 +27,14 @@ android {
       // explicitly disable proguard and related optimisations
       minifyEnabled false
 
+      buildConfigField "String", "TMDB_IMAGE_BASE", "\"https://image.tmdb.org/t/p\""
       buildConfigField "String", "TMDB_API_URL", "\"https://api.themoviedb.org/3/\""
       buildConfigField "String", "TMDB_API_KEY", getApiKey("tmdb.api_key")
     }
     debug {
       applicationIdSuffix '.debug'
 
+      buildConfigField "String", "TMDB_IMAGE_BASE", "\"https://image.tmdb.org/t/p\""
       buildConfigField "String", "TMDB_API_URL", "\"https://api.themoviedb.org/3/\""
       buildConfigField "String", "TMDB_API_KEY", getApiKey("tmdb.api_key")
     }
@@ -40,6 +43,10 @@ android {
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
+  }
+
+  dataBinding {
+    enabled = true
   }
 }
 
@@ -53,4 +60,38 @@ dependencies {
 
   // Android support libraries
   implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
+  implementation "com.android.support:cardview-v7:$supportLibraryVersion"
+  implementation "com.android.support:design:$supportLibraryVersion"
+
+  // ViewModel and Livedata
+  implementation "android.arch.lifecycle:extensions:1.1.1"
+
+  // Paging library
+  implementation ('android.arch.paging:runtime:1.0.0'){
+    exclude group: 'android.arch.lifecycle'
+  }
+
+  // ConstraintLayout!
+  implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+
+  // Timber logging facade
+  implementation 'com.jakewharton.timber:timber:4.7.0'
+
+  // Retrofit + Gson for networking & parsing
+  implementation 'com.google.code.gson:gson:2.8.4'
+  implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+  implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+
+  // ButterKnife
+  implementation 'com.jakewharton:butterknife:8.8.1'
+  annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+  // Picasso
+  implementation ('com.squareup.picasso:picasso:2.71828'){
+    exclude group: 'com.android.support'
+  }
+
+  // Facebook Stetho to debug network calls in debug builds
+  debugImplementation 'com.facebook.stetho:stetho:1.5.0'
+  debugImplementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
 }
