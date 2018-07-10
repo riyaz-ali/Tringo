@@ -32,4 +32,5 @@
 
   <!-- Shared element for transition -->
   <string name="tranistion.shared.movie_poster">shared_movie_poster_element</string>
+  <string name="movie.trailers">Trailers</string>
 </resources>
