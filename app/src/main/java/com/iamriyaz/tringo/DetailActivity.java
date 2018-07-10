@@ -28,6 +28,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.iamriyaz.tringo.adapter.ReviewAdapter;
 import com.iamriyaz.tringo.adapter.TrailerAdapter;
 import com.iamriyaz.tringo.data.Movie;
 import com.iamriyaz.tringo.data.MovieDetail;
@@ -158,6 +159,13 @@ public class DetailActivity extends AppCompatActivity {
     // provide some snappy behaviour to recycler
     new LinearSnapHelper().attachToRecyclerView(recycler);
 
+    // load movie reviews
+    RecyclerView trailerRecycler = findViewById(R.id.reviews);
+    trailerRecycler.setAdapter(new ReviewAdapter(movie.getReviews()));
+    // provide some snappy behaviour to recycler
+    new LinearSnapHelper().attachToRecyclerView(trailerRecycler);
+
+    // get Picasso
     Picasso picasso = Picasso.get();
 
     // load backdrop

@@ -211,6 +211,23 @@
           app:layoutManager="android.support.v7.widget.LinearLayoutManager"
           tools:listitem="@layout/adapter_trailer_item"/>
 
+      <!-- Reviews -->
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_margin="10dp"
+          android:visibility="@{movie == null? View.GONE : View.VISIBLE}"
+          android:text="@string/movie.reviews"
+          style="@style/TextAppearance.AppCompat.Large" />
+
+      <android.support.v7.widget.RecyclerView
+          android:id="@+id/reviews"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal"
+          app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+          tools:listitem="@layout/adapter_review_item"/>
+
     </LinearLayout>
   </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>
