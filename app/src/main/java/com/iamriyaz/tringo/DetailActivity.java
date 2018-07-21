@@ -1,5 +1,6 @@
 package com.iamriyaz.tringo;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.BindingAdapter;
@@ -38,10 +39,6 @@ import com.squareup.picasso.Picasso;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static com.iamriyaz.tringo.Utils.aspect;
 import static com.iamriyaz.tringo.Utils.calculateOtherDimension;
@@ -99,23 +96,13 @@ public class DetailActivity extends AppCompatActivity {
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
       enableTransitions();
 
-    Tringo.api(this)
-        .getMovieById(id)
-        .enqueue(new Callback<MovieDetail>() {
-          @Override public void onResponse(@NonNull Call<MovieDetail> call,
-              @NonNull Response<MovieDetail> response) {
-            if(response.isSuccessful()){
-              MovieDetail movie = Objects.requireNonNull(response.body());
-              render(movie);
-            } else {
-              onFailure(call, new Exception("API error"));
-            }
-          }
+    // get the view model instance
+    MovieDetailViewModel vm =
+        ViewModelProviders.of(this, new MovieDetailViewModel.Factory(Tringo.api(this), id))
+            .get(MovieDetailViewModel.class);
 
-          @Override public void onFailure(@NonNull Call<MovieDetail> call, @NonNull Throwable t) {
-
-          }
-        });
+    // ask for the movie
+    vm.movie.observe(this, this::render);
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
