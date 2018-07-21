@@ -58,7 +58,8 @@ public final class Tmdb {
     /**
      * Get movie by id
      */
-    @GET("movie/{id}") Call<MovieDetail> getMovieById(@Path("id") long id);
+    @GET("movie/{id}?append_to_response=reviews,videos,casts") Call<MovieDetail> getMovieById(
+        @Path("id") long id);
   }
 
   /**

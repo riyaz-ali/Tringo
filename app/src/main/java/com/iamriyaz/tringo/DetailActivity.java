@@ -6,6 +6,7 @@ import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,6 +14,8 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearSnapHelper;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -25,12 +28,16 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.iamriyaz.tringo.adapter.ReviewAdapter;
+import com.iamriyaz.tringo.adapter.TrailerAdapter;
 import com.iamriyaz.tringo.data.Movie;
 import com.iamriyaz.tringo.data.MovieDetail;
+import com.iamriyaz.tringo.data.Video;
 import com.iamriyaz.tringo.databinding.ActivityDetailBinding;
 import com.squareup.picasso.Picasso;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -139,6 +146,26 @@ public class DetailActivity extends AppCompatActivity {
     current = movie;
     binding.setMovie(movie);
 
+    // load trailer thumbs
+    List<Video> youtubeTrailers = FilterUtils.filter(movie.getVideos(), Video::isFromYouTube);
+    TrailerAdapter adapter = new TrailerAdapter(youtubeTrailers, video -> {
+      // open youtube link
+      Intent launchYoutube = new Intent(Intent.ACTION_VIEW);
+      launchYoutube.setData(Uri.parse(String.format("https://youtu.be/%s", video.getKey())));
+      startActivity(launchYoutube);
+    });
+    RecyclerView recycler = findViewById(R.id.trailers);
+    recycler.setAdapter(adapter);
+    // provide some snappy behaviour to recycler
+    new LinearSnapHelper().attachToRecyclerView(recycler);
+
+    // load movie reviews
+    RecyclerView trailerRecycler = findViewById(R.id.reviews);
+    trailerRecycler.setAdapter(new ReviewAdapter(movie.getReviews()));
+    // provide some snappy behaviour to recycler
+    new LinearSnapHelper().attachToRecyclerView(trailerRecycler);
+
+    // get Picasso
     Picasso picasso = Picasso.get();
 
     // load backdrop
