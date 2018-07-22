@@ -98,4 +98,7 @@ dependencies {
 
   // ArrayAdapter for RecyclerView
   implementation 'com.pascalwelsch.arrayadapter:arrayadapter:1.3.0'
+
+  // Lottie
+  implementation 'com.airbnb.android:lottie:2.5.5'
 }

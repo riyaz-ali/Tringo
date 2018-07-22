@@ -29,6 +29,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.airbnb.lottie.LottieAnimationView;
 import com.iamriyaz.tringo.adapter.ReviewAdapter;
 import com.iamriyaz.tringo.adapter.TrailerAdapter;
 import com.iamriyaz.tringo.data.Movie;
@@ -103,6 +104,10 @@ public class DetailActivity extends AppCompatActivity {
 
     // ask for the movie
     vm.movie.observe(this, this::render);
+
+    // setup favorite button
+    LottieAnimationView av = findViewById(R.id.favorite);
+   // av.setScale(0.9f);
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
