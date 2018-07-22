@@ -36,6 +36,9 @@ public class MovieDetail {
   @SerializedName("casts")
     private DumbCastResponse cast;
 
+  // locally populated - from database
+  private boolean favorited;
+
   //------------------ GENERATED ------------------//
 
   public long getId() {
@@ -84,6 +87,14 @@ public class MovieDetail {
 
   public List<Cast> getCast(){
     return cast.results;
+  }
+
+  public boolean isFavorited() {
+    return favorited;
+  }
+
+  public void setFavorited(boolean favorited) {
+    this.favorited = favorited;
   }
 
   @Override public String toString() {

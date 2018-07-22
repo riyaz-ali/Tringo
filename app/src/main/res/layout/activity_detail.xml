@@ -82,10 +82,12 @@
                 android:layout_width="48dp"
                 android:layout_height="36dp"
                 android:layout_gravity="top|end"
-                app:lottie_autoPlay="true"
-                app:lottie_loop="true"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                app:lottie_autoPlay="false"
                 app:lottie_rawRes="@raw/favorite"
-                tools:background="#2f00"/>
+                tools:background="#2f00" />
 
             <LinearLayout
                 android:layout_width="match_parent"
