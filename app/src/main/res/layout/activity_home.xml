@@ -103,4 +103,17 @@
       tools:layoutManager="android.support.v7.widget.GridLayoutManager"
       tools:spanCount="2"
       tools:listitem="@layout/adapter_movie_item" />
+
+  <android.support.design.widget.FloatingActionButton
+      android:id="@+id/favorites"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="16dp"
+      android:layout_gravity="bottom|end"
+      android:src="@drawable/ic_heart"
+      app:layout_behavior="com.iamriyaz.tringo.FabScrollBehaviour"
+      app:fabSize="normal"
+      app:layout_anchor="@id/movies"
+      app:layout_anchorGravity="bottom|right|end"
+      />
 </android.support.design.widget.CoordinatorLayout>

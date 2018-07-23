@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import android.transition.ChangeBounds;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.CheckedTextView;
+import android.widget.Toast;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -148,5 +150,10 @@ public class HomeActivity extends AppCompatActivity implements MovieAdapter.OnCl
     changeBounds.setDuration(500);
     changeBounds.setInterpolator(new AccelerateInterpolator());
     getWindow().setSharedElementExitTransition(changeBounds);
+  }
+
+  @OnClick(R.id.favorites) public void onShowFavorite(FloatingActionButton fab){
+    // TODO: open the favorite listing view
+    Toast.makeText(this, "todo", Toast.LENGTH_SHORT).show();
   }
 }
