@@ -3,6 +3,7 @@ package com.iamriyaz.tringo.data;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.Query;
 
 /**
  * Created on 23 Jul, 2018
@@ -24,4 +25,13 @@ import android.arch.persistence.room.Insert;
    * @param movie movie to remove
    */
   @Delete void delete(Movie movie);
+
+  /**
+   * Query database to check if the movie exists in it
+   *
+   * @param movie id of the movie to check
+   * @return true if movie exists (i.e. is favorited) else false
+   */
+  @Query("SELECT EXISTS(SELECT id FROM movies WHERE id=:movie)")
+    boolean exists(long movie);
 }

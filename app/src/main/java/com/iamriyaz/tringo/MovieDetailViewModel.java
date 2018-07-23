@@ -5,7 +5,10 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.os.AsyncTask;
+import android.os.AsyncTask.Status;
 import android.support.annotation.NonNull;
+import com.iamriyaz.tringo.data.FavoriteDatabase;
+import com.iamriyaz.tringo.data.Movie;
 import com.iamriyaz.tringo.data.MovieDetail;
 import com.iamriyaz.tringo.data.Tmdb;
 import java.io.IOException;
@@ -29,6 +32,7 @@ public class MovieDetailViewModel extends ViewModel {
 
   // async tasks
   private FetchMovieTask fetchMovieTask;
+  private FavoriteToggleTask favoriteToggleTask;
 
   // create new view model using api and movie id
   MovieDetailViewModel(@NonNull Tmdb.Api api, long id){
@@ -38,12 +42,13 @@ public class MovieDetailViewModel extends ViewModel {
 
   // mark movie as favorited or not
   public void toggleFavorite(){
-    // TODO: need to make a database call here
-    // for now just update the favorite marker in MovieDetail
     MovieDetail movie = this.movie.getValue();
     if(null != movie){
-      movie.setFavorited(!movie.isFavorited());
-      favorite.setValue(movie.isFavorited());
+      if(null != favoriteToggleTask && favoriteToggleTask.getStatus() != Status.FINISHED){
+        favoriteToggleTask.cancel(true);
+      }
+      favoriteToggleTask = new FavoriteToggleTask();
+      favoriteToggleTask.execute(movie);
     } // else movie is not yet loaded! do nothing
   }
 
@@ -51,8 +56,11 @@ public class MovieDetailViewModel extends ViewModel {
     super.onCleared();
 
     // cancel fetching if we happen to leave before the load is complete
-    if(null != fetchMovieTask && fetchMovieTask.getStatus() != AsyncTask.Status.FINISHED){
+    if(null != fetchMovieTask && fetchMovieTask.getStatus() != Status.FINISHED){
       fetchMovieTask.cancel(true);
+    }
+    if(null != favoriteToggleTask && favoriteToggleTask.getStatus() != Status.FINISHED){
+      favoriteToggleTask.cancel(true);
     }
   }
 
@@ -84,8 +92,13 @@ public class MovieDetailViewModel extends ViewModel {
         // get a response (synchronously)
         Response<MovieDetail> response = api.getMovieById(ids[0]).execute();
         // get the movie object
-        // TODO: make a database call to get the favorited status
-        return requireNonNull(response.body());
+        MovieDetail movie = requireNonNull(response.body());
+        // check in database if the movie is favorited and toggle status accordingly
+        movie.setFavorited(
+            // movie exists in database?
+            FavoriteDatabase.get().movieDao().exists(movie.getId())
+        );
+        return movie;
       } catch (IOException ioe){
         Timber.e(ioe);
         return null;
@@ -99,6 +112,36 @@ public class MovieDetailViewModel extends ViewModel {
       super.onPostExecute(_movie);
       if(null != _movie)
         movie.setValue(_movie);
+    }
+  }
+
+  // Async Task to mark/unmark movie as favorite
+  @SuppressLint("StaticFieldLeak")
+  private class FavoriteToggleTask extends AsyncTask<MovieDetail, Void, MovieDetail> {
+    @Override protected MovieDetail doInBackground(MovieDetail... movies) {
+      // exit early
+      if(movies.length == 0)
+        return null;
+
+      // create an entity
+      Movie _movie = new Movie(movies[0].getId(), movies[0].getTitle(), movies[0].getPoster());
+      // toggle favorited status
+      movies[0].setFavorited(!movies[0].isFavorited());
+      // update in the database
+      if(movies[0].isFavorited()){
+        FavoriteDatabase.get().movieDao().insert(_movie);
+      } else {
+        FavoriteDatabase.get().movieDao().delete(_movie);
+      }
+
+      return movies[0];
+    }
+
+    @Override protected void onPostExecute(MovieDetail movieDetail) {
+      super.onPostExecute(movieDetail);
+      if(null != movieDetail){ // although it should always be non null
+        favorite.setValue(movieDetail.isFavorited());
+      }
     }
   }
 }
