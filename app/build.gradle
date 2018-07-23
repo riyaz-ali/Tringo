@@ -72,6 +72,11 @@ dependencies {
     exclude group: 'android.arch.lifecycle'
   }
 
+  // Room persistence library
+  implementation "android.arch.persistence.room:runtime:1.1.1"
+  annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
+
+
   // ConstraintLayout!
   implementation 'com.android.support.constraint:constraint-layout:1.1.0'
 
