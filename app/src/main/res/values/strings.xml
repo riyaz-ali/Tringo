@@ -3,7 +3,7 @@
 <!DOCTYPE resources [
     <!ENTITY minutes "min">
     <!ENTITY outof  "/ 10">
-]>
+    ]>
 <resources>
   <string name="app.name">tRingo</string>
 
@@ -32,4 +32,7 @@
 
   <!-- Shared element for transition -->
   <string name="tranistion.shared.movie_poster">shared_movie_poster_element</string>
+  <string name="movie.trailers">Trailers</string>
+  <string name="movie.reviews">Reviews</string>
+  <string name="favorites">Favorites</string>
 </resources>

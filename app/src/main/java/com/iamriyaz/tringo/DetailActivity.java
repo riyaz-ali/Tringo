@@ -1,11 +1,14 @@
 package com.iamriyaz.tringo;
 
+import android.animation.ValueAnimator;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,6 +16,8 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearSnapHelper;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -25,16 +30,17 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.airbnb.lottie.LottieAnimationView;
+import com.iamriyaz.tringo.adapter.ReviewAdapter;
+import com.iamriyaz.tringo.adapter.TrailerAdapter;
 import com.iamriyaz.tringo.data.Movie;
 import com.iamriyaz.tringo.data.MovieDetail;
+import com.iamriyaz.tringo.data.Video;
 import com.iamriyaz.tringo.databinding.ActivityDetailBinding;
 import com.squareup.picasso.Picasso;
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.Objects;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import java.util.List;
 
 import static com.iamriyaz.tringo.Utils.aspect;
 import static com.iamriyaz.tringo.Utils.calculateOtherDimension;
@@ -47,9 +53,17 @@ public class DetailActivity extends AppCompatActivity {
   public static final String KEY_MOVIE_ID = "TMDB.MOVIE_ID";
   public static final String KEY_TRANSITION_NAME = "TMDB.TRANSITION_NAME";
 
+  // Animation progress thresholds
+  private static final float FAVORITE_START   = 0.4f;
+  private static final float FAVORITE_END     = 0.93f;
+  private static final float UNFAVORITE_START = 0.93f;
+  private static final float UNFAVORITE_END   = 1f;
+
+  // databinding
   private ActivityDetailBinding binding;
 
-  private MovieDetail current;
+  // viewmodel
+  private MovieDetailViewModel vm;
 
   public static Intent intent(@NonNull Context context, @NonNull Movie movie){
     return new Intent(context, DetailActivity.class)
@@ -92,23 +106,25 @@ public class DetailActivity extends AppCompatActivity {
     if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
       enableTransitions();
 
-    Tringo.api(this)
-        .getMovieById(id)
-        .enqueue(new Callback<MovieDetail>() {
-          @Override public void onResponse(@NonNull Call<MovieDetail> call,
-              @NonNull Response<MovieDetail> response) {
-            if(response.isSuccessful()){
-              MovieDetail movie = Objects.requireNonNull(response.body());
-              render(movie);
-            } else {
-              onFailure(call, new Exception("API error"));
-            }
-          }
+    // get the view model instance
+    vm = ViewModelProviders.of(this,
+        new MovieDetailViewModel.Factory(Tringo.api(this), id)).get(MovieDetailViewModel.class);
 
-          @Override public void onFailure(@NonNull Call<MovieDetail> call, @NonNull Throwable t) {
+    // ask for the movie
+    vm.movie.observe(this, this::render);
 
-          }
-        });
+    // ask for favorite state
+    vm.favorite.observe(this, is -> {
+      // set the favorite view's initial state
+      LottieAnimationView av = findViewById(R.id.favorite);
+      if(null != is && is)
+        animate(av, FAVORITE_START, FAVORITE_END, 750);
+      else
+        animate(av, UNFAVORITE_START, UNFAVORITE_END, 750);
+    });
+
+    // setup favorite button
+    findViewById(R.id.favorite).setOnClickListener(v -> vm.toggleFavorite());
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -120,14 +136,16 @@ public class DetailActivity extends AppCompatActivity {
     if(android.R.id.home == item.getItemId()) {
       onBackPressed();
       return true;
-    } else if(R.id.menu_share_movie == item.getItemId() && null != current){
-      Intent share = new Intent(Intent.ACTION_SEND);
-      share.setType("text/plain");
-      share.putExtra(Intent.EXTRA_TEXT, createTmdbShareUrl(current));
+    } else if(R.id.menu_share_movie == item.getItemId()){
+      if(null != vm.movie.getValue()) {
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("text/plain");
+        share.putExtra(Intent.EXTRA_TEXT, createTmdbShareUrl(vm.movie.getValue()));
 
-      Intent chooser = Intent.createChooser(share, getString(R.string.movie_share_via));
-      if(null != chooser.resolveActivity(getPackageManager())){
-        startActivity(chooser);
+        Intent chooser = Intent.createChooser(share, getString(R.string.movie_share_via));
+        if (null != chooser.resolveActivity(getPackageManager())) {
+          startActivity(chooser);
+        }
       }
       return true;
     } else {
@@ -136,9 +154,33 @@ public class DetailActivity extends AppCompatActivity {
   }
 
   private void render(@NonNull MovieDetail movie){
-    current = movie;
     binding.setMovie(movie);
 
+    // load trailer thumbs
+    List<Video> youtubeTrailers = FilterUtils.filter(movie.getVideos(), Video::isFromYouTube);
+    TrailerAdapter adapter = new TrailerAdapter(youtubeTrailers, video -> {
+      // open youtube link
+      Intent launchYoutube = new Intent(Intent.ACTION_VIEW);
+      launchYoutube.setData(Uri.parse(String.format("https://youtu.be/%s", video.getKey())));
+      startActivity(launchYoutube);
+    });
+    RecyclerView recycler = findViewById(R.id.trailers);
+    recycler.setAdapter(adapter);
+    // provide some snappy behaviour to recycler
+    new LinearSnapHelper().attachToRecyclerView(recycler);
+
+    // load movie reviews
+    RecyclerView trailerRecycler = findViewById(R.id.reviews);
+    trailerRecycler.setAdapter(new ReviewAdapter(movie.getReviews()));
+    // provide some snappy behaviour to recycler
+    new LinearSnapHelper().attachToRecyclerView(trailerRecycler);
+
+    // initial favorite status
+    LottieAnimationView av = findViewById(R.id.favorite);
+    if(movie.isFavorited())
+      av.setProgress(FAVORITE_END);
+
+    // get Picasso
     Picasso picasso = Picasso.get();
 
     // load backdrop
@@ -157,6 +199,15 @@ public class DetailActivity extends AppCompatActivity {
     changeBounds.setInterpolator(new DecelerateInterpolator());
     getWindow().setSharedElementEnterTransition(changeBounds);
   }
+
+  // favorite animation
+  @SuppressWarnings("SameParameterValue")
+  private void animate(@NonNull LottieAnimationView av, float start, float end, long duration){
+    ValueAnimator animator = ValueAnimator.ofFloat(start, end).setDuration(duration);
+    animator.addUpdateListener(animation -> av.setProgress((float) animation.getAnimatedValue()));
+    animator.start();
+  }
+
   // DataBinding formatting utilities
   public static class FormatUtils {
 

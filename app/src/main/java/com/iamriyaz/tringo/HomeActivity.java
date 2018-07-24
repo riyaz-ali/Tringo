@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -148,5 +149,9 @@ public class HomeActivity extends AppCompatActivity implements MovieAdapter.OnCl
     changeBounds.setDuration(500);
     changeBounds.setInterpolator(new AccelerateInterpolator());
     getWindow().setSharedElementExitTransition(changeBounds);
+  }
+
+  @OnClick(R.id.favorites) public void onShowFavorite(FloatingActionButton fab){
+    startActivity(new Intent(this, FavoriteActivity.class));
   }
 }

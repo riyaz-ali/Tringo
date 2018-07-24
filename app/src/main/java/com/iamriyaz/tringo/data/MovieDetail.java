@@ -2,6 +2,7 @@ package com.iamriyaz.tringo.data;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Movie detail data class
@@ -28,6 +29,15 @@ public class MovieDetail {
     private Date release;
   @SerializedName("vote_average")
     private float rating;
+  @SerializedName("reviews")
+    private DumbResponse<Review> reviews;
+  @SerializedName("videos")
+    private DumbResponse<Video> videos;
+  @SerializedName("casts")
+    private DumbCastResponse cast;
+
+  // locally populated - from database
+  private boolean favorited;
 
   //------------------ GENERATED ------------------//
 
@@ -67,6 +77,26 @@ public class MovieDetail {
     return imdb;
   }
 
+  public List<Review> getReviews() {
+    return reviews.results;
+  }
+
+  public List<Video> getVideos(){
+    return videos.results;
+  }
+
+  public List<Cast> getCast(){
+    return cast.results;
+  }
+
+  public boolean isFavorited() {
+    return favorited;
+  }
+
+  public void setFavorited(boolean favorited) {
+    this.favorited = favorited;
+  }
+
   @Override public String toString() {
     return "MovieDetail{" +
         "id=" + id +
@@ -78,5 +108,16 @@ public class MovieDetail {
         ", release=" + release +
         ", rating=" + rating +
         '}';
+  }
+
+  // placeholder class for envelop'ing response object
+  private static class DumbResponse<T> {
+    @SerializedName("results")
+      List<T> results;
+  }
+
+  private static class DumbCastResponse {
+    @SerializedName("cast")
+      List<Cast> results;
   }
 }
