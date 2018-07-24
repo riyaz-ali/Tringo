@@ -1,9 +1,11 @@
 package com.iamriyaz.tringo.data;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
+import java.util.List;
 
 /**
  * Created on 23 Jul, 2018
@@ -34,4 +36,11 @@ import android.arch.persistence.room.Query;
    */
   @Query("SELECT EXISTS(SELECT id FROM movies WHERE id=:movie)")
     boolean exists(long movie);
+
+  /**
+   * Get a {@link List} of all favorited {@link Movie}
+   *
+   * @return list of all favorited movies
+   */
+  @Query("SELECT * FROM movies") LiveData<List<Movie>> all();
 }

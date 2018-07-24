@@ -68,7 +68,7 @@ dependencies {
   implementation "android.arch.lifecycle:extensions:1.1.1"
 
   // Paging library
-  implementation ('android.arch.paging:runtime:1.0.0'){
+  implementation('android.arch.paging:runtime:1.0.0') {
     exclude group: 'android.arch.lifecycle'
   }
 
@@ -93,7 +93,7 @@ dependencies {
   annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
   // Picasso
-  implementation ('com.squareup.picasso:picasso:2.71828'){
+  implementation('com.squareup.picasso:picasso:2.71828') {
     exclude group: 'com.android.support'
   }
 

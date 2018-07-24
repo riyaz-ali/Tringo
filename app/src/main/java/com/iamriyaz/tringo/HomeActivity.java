@@ -18,7 +18,6 @@ import android.transition.ChangeBounds;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.CheckedTextView;
-import android.widget.Toast;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -153,7 +152,6 @@ public class HomeActivity extends AppCompatActivity implements MovieAdapter.OnCl
   }
 
   @OnClick(R.id.favorites) public void onShowFavorite(FloatingActionButton fab){
-    // TODO: open the favorite listing view
-    Toast.makeText(this, "todo", Toast.LENGTH_SHORT).show();
+    startActivity(new Intent(this, FavoriteActivity.class));
   }
 }
