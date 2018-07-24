@@ -1,8 +1,10 @@
 package com.iamriyaz.tringo;
 
 import android.app.Application;
+import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import com.iamriyaz.tringo.data.FavoriteDatabase;
 import com.iamriyaz.tringo.data.Tmdb;
 import com.squareup.picasso.Picasso;
 import timber.log.Timber;
@@ -37,6 +39,11 @@ public final class Tringo extends Application {
         .indicatorsEnabled(BuildConfig.DEBUG)
         .build();
     Picasso.setSingletonInstance(picasso);
+
+    // initialize Room database
+    FavoriteDatabase database = Room.databaseBuilder(this.getApplicationContext(),
+        FavoriteDatabase.class, "favorite.db").build();
+    FavoriteDatabase.set(database);
   }
 
   @NonNull public static Tmdb.Api api(@NonNull Context context){

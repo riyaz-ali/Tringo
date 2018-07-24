@@ -1,5 +1,9 @@
 package com.iamriyaz.tringo.data;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
 import android.support.v7.util.DiffUtil;
 import android.text.TextUtils;
 import com.google.gson.annotations.SerializedName;
@@ -11,16 +15,36 @@ import com.google.gson.annotations.SerializedName;
  * Created on 04 Jun, 2018
  * @author Riyaz
  */
-public class Movie {
+@Entity(
+    tableName = "movies"
+) public class Movie {
+
   // id of the movie
-  private long id;
+  @PrimaryKey
+    private long id;
 
   // title of the movie
-  private String title;
+  @ColumnInfo(name = "title")
+    private String title;
 
   // path to movie's poster
   @SerializedName("poster_path")
-  private String poster;
+  @ColumnInfo(name = "poster")
+    private String poster;
+
+  // required empty constructor for gson and room
+  public Movie(){
+    // void
+  }
+
+  // constructor for building the movie object manually
+  // must be ignored by Room
+  @Ignore public Movie(long id, String title, String poster){
+    this.id = id;
+    this.title = title;
+    this.poster = poster;
+  }
+
 
   // DiffCallback to assist Adapter
   public static final DiffUtil.ItemCallback<Movie> DIFF_CALLBACK = new DiffUtil.ItemCallback<Movie>() {
@@ -48,6 +72,18 @@ public class Movie {
 
   public String getPoster() {
     return poster;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public void setPoster(String poster) {
+    this.poster = poster;
   }
 
   @Override public String toString() {
